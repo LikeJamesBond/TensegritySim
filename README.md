@@ -8,9 +8,10 @@ Tensegrity Sim is a Python-based simulation framework developed to support resea
 
 The software is designed to support reproducible simulation of static equilibrium configurations under prescribed control inputs, and to facilitate extension toward optimization, control, and hardware-in-the-loop experimentation.
 
-This repository accompanies the paper:
+This software implements the models and numerical methods described in:
 
-> TensegritySim Python Package Using Virtual Work, submitted to the ASME Journal of Mechanisms and Robotics.
+> Brown A., Modeling and Simulation of Tensegrity Structures with Continuous Cables, Brigham Young University, 2025
+> Brown et al., TensegritySim Python Package Using Virtual Work, submitted to the ASME Journal of Mechanisms and Robotics.
 
 All simulations presented in the paper can be reproduced using the configuration files provided in the `yaml` directory.
 
@@ -49,6 +50,14 @@ The simulation framework adopts the following modeling conventions:
 - Equilibrium configurations are computed using numerical optimization.
 
 These assumptions are consistent with those described in the accompanying paper.
+
+## Limitations
+
+The solver assumes quasi-static equilibrium and may not converge for highly overconstrained or ill-conditioned configurations.
+
+## Scope of Implementation
+
+The current implementation supports static equilibrium analysis of tensegrity structures with tension-only cable elements and inextensible bars. Dynamic effects, damping, and contact interactions are not included.
 
 ## Organization
 `main.py` provides an example entry point for running simulations using YAML-defined models and control inputs.
