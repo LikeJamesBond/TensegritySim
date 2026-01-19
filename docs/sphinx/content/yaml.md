@@ -1,4 +1,10 @@
 # YAML Reference <!-- omit from toc -->
+## Purpose and Scope
+
+This document specifies the YAML-based configuration interface used to define tensegrity models for simulation. Each parameter corresponds directly to quantities defined in the accompanying thesis and journal paper.  
+
+The YAML files serve as the *scientific interface* to the simulation framework, enabling reproducible specification of geometry, connectivity, material behavior, constraints, and actuation.
+
 The config file is a YAML file defining:
 - [Nodes](#nodes)
 - [Connections](#connections)
@@ -14,6 +20,9 @@ These sections can be defined in any order in the YAML file, but it is easiest t
 There are sample config files in the `yaml` directory.
 
 ## Nodes
+**Theoretical correspondence:**  
+Node coordinates correspond to the position vectors $\mathbf{x}_i$ defined in Chapter 3 of the thesis.
+
 Nodes are the points that bars and strings connect at.
 
 Nodes have a name and initial x, y, z positions.  
@@ -24,10 +33,10 @@ nodes:
     Node1: [1, 2, 0]
 ```
 
-The Tensegrity class sets the number of dimensions to 2 or 3 based on the number of coordinates given for the nodes. If all nodes have 3 coordinates, the structure is solved in 3D space. If any nodes have only 2 coordinates, the structure is solved in 2D space.
+The Tensegrity class sets the number of dimensions to 2 or 3 based on the number of coordinates given for the nodes. If all nodes have 3 coordinates, the structure is solved in 3D space. If any node is defined with only two coordinates, the structure is solved in two-dimensional space.
 
 ## Connections
-Connections are how the nodes are connected to each other. There can be unlimited connection types, with each connection type having different properties as defined in the [Builders](#builders) section.
+Connections are how the nodes are connected to each other. An arbitrary number of connection types may be defined, each associated with a corresponding [Builders](#builders) specification.
 
 A connection type named `strings` with a connection between `Node1` and `Node2` looks like:
 
@@ -58,7 +67,7 @@ connections:
 Builders are the connection properties that define the strings or bars that hold the nodes together.
 A builder must have a name matching a connection type in the `Connections` section.
 
-For the `string` connection type with a stiffness (k) of 100N/m (it is actually unitless, but it helps me to think of everything in terms of metric units) and the unstretched length of the string 95% of the currently defined length between nodes:
+For the `string` connection type with a stiffness (k) of 100N/m and the unstretched length of the string 95% of the currently defined length between nodes:
 
 ```yaml
 builders:
@@ -67,6 +76,8 @@ builders:
         type: string
         initial_length_ratio: 0.95
 ```
+**Theoretical correspondence:**  
+The stiffness parameter corresponds to the axial stiffness $k$ used in the constitutive model described in Section 3.2 of the thesis. Units are consistent across all simulations but are not enforced by the solver.
 
 If the unstretched length of the string is unknown but the tension is known, Hooke's Law can be used to calculate the initial length: $F = k * (l_s - l)$ where $l_s$ is the stretched length of the string (distance between it's nodes) and $l$ is the unstretched length.
 
@@ -102,7 +113,7 @@ control:
 ### Type
 The only type of surface currently implemented is a cylinder. A radius must be specified for the radius of the cylinder to wrap the tensegrity around.
 
-The structure is wrapped around a $\hat{k}$ axis. In other words the x-axis wraps the circumference of the cylinder with a set radius, r. In the future I hope we can define the radius to change as a function of the z height, either with an equation, or reading in points from a file and using interpolation.
+The structure is wrapped around a $\hat{k}$ axis. In other words the x-axis wraps the circumference of the cylinder with a set radius, r. Future extensions may allow spatially varying surface geometry; however, only constant-radius cylindrical surfaces are currently supported.
 
 ### Linked Nodes
 The linked nodes section takes pairs of nodes to be connected to each other on opposite sides of the cylinder.
@@ -118,3 +129,12 @@ surface:
     - [Node9, Node12]
 ```
 The only currently defined surface for linking nodes around is a cylinder.
+
+## Reproducibility Notes
+
+All YAML files used to generate figures and results in the accompanying journal paper are provided in the `yaml/` directory of the repository.  
+
+Each file fully specifies the model state and control parameters required to reproduce the corresponding simulation results, without reliance on hard-coded values.
+
+Configuration file names correspond to figures and case studies presented in the journal paper where applicable.
+
